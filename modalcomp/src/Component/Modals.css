@@ -1,0 +1,15 @@
+.heading{
+  margin-top: 0%;
+}
+.style{
+background-color: #3498db;
+color: white;
+border: none;
+padding: 10px 20px;
+}
+.blur {
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0%;
+  height: 100vh;
+}
