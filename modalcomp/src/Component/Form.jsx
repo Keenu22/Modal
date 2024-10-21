@@ -83,7 +83,7 @@ const Form = forwardRef((props, ref) => {
   };
 
   return (
-    <dialog ref={dialogRef} onClick={handleClickOutside}>
+    <div className="modal" ref={dialogRef} onClick={handleClickOutside}>
       <div className="modal-content">
         <form className="user-form" onSubmit={handleSubmit}>
           <h1>Fill Details</h1>
@@ -153,7 +153,7 @@ const Form = forwardRef((props, ref) => {
           </button>
         </form>
       </div>
-    </dialog>
+    </div>
   );
 });
 
