@@ -1,8 +1,8 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import "./Form.css";
 
 const Form = forwardRef((props, ref) => {
-  const dialogRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false); // To track the visibility of the modal
   const [user, setUser] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -11,16 +11,13 @@ const Form = forwardRef((props, ref) => {
   const [phoneError, setPhoneError] = useState("");
   const [dobError, setDobError] = useState("");
 
+  // Expose open and close functions to the parent component using useImperativeHandle
   useImperativeHandle(ref, () => ({
     open: () => {
-      if (dialogRef.current) {
-        dialogRef.current.showModal();
-      }
+      setIsOpen(true);
     },
     close: () => {
-      if (dialogRef.current) {
-        dialogRef.current.close();
-      }
+      setIsOpen(false);
     }
   }));
 
@@ -73,87 +70,93 @@ const Form = forwardRef((props, ref) => {
       setPhoneError("");
       setDobError("");
       setUser("");
+      setIsOpen(false); // Close the modal after form submission
+      props.onClose();
     }
   };
 
   const handleClickOutside = (e) => {
-    if (dialogRef.current && e.target === dialogRef.current) {
-      dialogRef.current.close();
+    if (e.target.className === "modal") {
+      setIsOpen(false); // Close the modal if the user clicks outside the modal content
+      props.onClose();
     }
   };
 
   return (
-    <div className="modal" ref={dialogRef} onClick={handleClickOutside}>
-      <div className="modal-content">
-        <form className="user-form" onSubmit={handleSubmit}>
-          <h1>Fill Details</h1>
+    // Only render the modal when isOpen is true
+    isOpen && (
+      <div className="modal" onClick={handleClickOutside}>
+        <div className="modal-content">
+          <form className="user-form" onSubmit={handleSubmit}>
+            <h1>Fill Details</h1>
 
-          <div className="form-group">
-            <label htmlFor="username">Username:</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="username">Username:</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
+                required
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="email">Email Address:</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              required
-              onChange={(e) => {
-                setEmail(e.target.value);
-                validateEmail(e.target.value);
-              }}
-            />
-            {emailError && <small className="error-message">{emailError}</small>}
-          </div>
+            <div className="form-group">
+              <label htmlFor="email">Email Address:</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={email}
+                required
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  validateEmail(e.target.value);
+                }}
+              />
+              {emailError && <small className="error-message">{emailError}</small>}
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number:</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={phone}
-              required
-              onChange={(e) => {
-                setPhone(e.target.value);
-                validatePhone(e.target.value);
-              }}
-            />
-            {phoneError && <small className="error-message">{phoneError}</small>}
-          </div>
+            <div className="form-group">
+              <label htmlFor="phone">Phone Number:</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={phone}
+                required
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  validatePhone(e.target.value);
+                }}
+              />
+              {phoneError && <small className="error-message">{phoneError}</small>}
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="dob">Date of Birth:</label>
-            <input
-              type="date"
-              id="dob"
-              name="dob"
-              value={dob}
-              required
-              onChange={(e) => {
-                setDob(e.target.value);
-                validateDOB(e.target.value);
-              }}
-            />
-            {dobError && <small className="error-message">{dobError}</small>}
-          </div>
+            <div className="form-group">
+              <label htmlFor="dob">Date of Birth:</label>
+              <input
+                type="date"
+                id="dob"
+                name="dob"
+                value={dob}
+                required
+                onChange={(e) => {
+                  setDob(e.target.value);
+                  validateDOB(e.target.value);
+                }}
+              />
+              {dobError && <small className="error-message">{dobError}</small>}
+            </div>
 
-          <button className="submit-button" type="submit">
-            Submit
-          </button>
-        </form>
+            <button className="submit-button" type="submit">
+              Submit
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    )
   );
 });
 
